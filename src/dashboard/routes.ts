@@ -6,7 +6,22 @@ const router = Router();
  * ROUTER
  */
 
-router.get("/near");
+// API to get All the Scaapes for the DASHBOARD for a user
+router.get("/");
+
+// API to get all scaapes with query filter -> all, attending, created_by_me
+router.get("/scaapes");
+
+// API to get the city & details from the lat & long
+router.get("/location");
+
+// API to get Scaape details by id
+router.get("/scaapes/:id");
+
+// API to get the participants for the Scaape
+router.get("/scaapes/participants");
+
+//
 
 /**
  * SELECT *
