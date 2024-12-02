@@ -1,13 +1,24 @@
 import Router from "express";
+import DashboardController from "./controller";
+import { validateFetchScaapesForDashboard } from "./middleware";
 
 const router = Router();
 
-/**
- * ROUTER
- */
+const { fetchScaapesForDashboardController } = new DashboardController();
 
-// API to get All the Scaapes for the DASHBOARD for a user
-router.get("/");
+/**
+ * API to get All the Scaapes for the DASHBOARD for a user
+ * @req_body user_id - The id of the user
+ * @query_param long - The longitude of the user
+ * @query_param lat - The latitude of the user
+ * @query_param city - The city of the user
+ * @returns JSON response with the scaapes
+ */
+router.get(
+  "/",
+  validateFetchScaapesForDashboard,
+  fetchScaapesForDashboardController
+);
 
 // API to get all scaapes with query filter -> all, attending, created_by_me
 router.get("/scaapes");
