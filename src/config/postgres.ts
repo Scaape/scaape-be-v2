@@ -17,9 +17,7 @@ const pool = new Pool({
   host: DB_HOST,
   port: parseInt(String(DB_PORT), 10),
   database: DB_NAME,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false, // Disable SSL
 });
 
 export default {

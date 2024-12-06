@@ -1,10 +1,26 @@
-import Router from "express";
+import { Router } from "express";
+
 import DashboardController from "./controller";
-import { validateFetchScaapesForDashboard } from "./middleware";
+import {
+  validateCreateScaape,
+  validateFetchScaapeParticipantsByScaapeId,
+  validateFetchScaapePendingApprovalsByScaapeId,
+  validateFetchScaapesForDashboard,
+  validateManageApprovals,
+} from "./middleware";
 
-const router = Router();
+const router: Router = Router();
 
-const { fetchScaapesForDashboardController } = new DashboardController();
+const {
+  fetchScaapesForDashboardController,
+  fetchScaapeDetailsByIdController,
+  createScaapeController,
+  fetchScaapesController,
+  fetchScaapeParticipantsController,
+  manageApprovalsController,
+  fetchScaapeParticipantsByScaapeIdController,
+  fetchLocationDetailsController,
+} = new DashboardController();
 
 /**
  * API to get All the Scaapes for the DASHBOARD for a user
@@ -20,31 +36,38 @@ router.get(
   fetchScaapesForDashboardController
 );
 
+// API to create a new Scaape
+router.post("/scaapes", validateCreateScaape, createScaapeController);
+
 // API to get all scaapes with query filter -> all, attending, created_by_me
-router.get("/scaapes");
+router.get("/scaapes", fetchScaapesController);
 
 // API to get the city & details from the lat & long
-router.get("/location");
+router.get("/location", fetchLocationDetailsController);
 
 // API to get Scaape details by id
-router.get("/scaapes/:id");
+router.get("/scaapes/:id", fetchScaapeDetailsByIdController);
 
 // API to get the participants for the Scaape
-router.get("/scaapes/participants");
+router.get(
+  "/scaapes/pending-approvals/:scaape_id",
+  validateFetchScaapePendingApprovalsByScaapeId,
+  fetchScaapeParticipantsController
+);
 
-//
+// API to manage approvals
+router.patch(
+  "/scaapes/manage-approvals/:scaape_id",
+  validateManageApprovals,
+  manageApprovalsController
+);
 
-/**
- * SELECT *
-FROM events
-WHERE city = (
-    SELECT city
-    FROM events
-    WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), 10000)
-    LIMIT 1
-)
-AND ST_DWithin(location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :radius);
- */
+// API to get event attendance (show people who are approved)
+router.get(
+  "/scaapes/participants/:scaape_id",
+  validateFetchScaapeParticipantsByScaapeId,
+  fetchScaapeParticipantsByScaapeIdController
+);
 
 export default router;
 
@@ -102,4 +125,16 @@ scaapeId
 GET /getAttendance
 PUT /reportScaape
 
+ */
+
+/**
+ * SELECT *
+FROM events
+WHERE city = (
+    SELECT city
+    FROM events
+    WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), 10000)
+    LIMIT 1
+)
+AND ST_DWithin(location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :radius);
  */
