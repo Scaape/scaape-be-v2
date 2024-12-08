@@ -22,7 +22,13 @@ import {
   IManageApprovalsReqObj,
   IMetaData,
   IUpdateScaapeAttendeeCountDbReqObj,
+  IUpdateScaapeBasicDetailsObj,
+  IUpdateScaapeBasicDetailsReqObj,
+  IUpdateScaapeLocationDetailsObj,
+  IUpdateScaapeLocationDetailsReqObj,
   IUpdateScaapeParticipantsStatusDbReqObj,
+  IUpdateScaapePaymentDetailsObj,
+  IUpdateScaapePaymentDetailsReqObj,
 } from "./types/interface";
 import moment from "moment";
 
@@ -371,5 +377,152 @@ export default class DashboardService extends DashboardHelper {
       long,
       ...locationDetails,
     };
+  };
+
+  protected updateScaapeBasicDetailsService = async (
+    reqObj: IUpdateScaapeBasicDetailsReqObj
+  ) => {
+    /**
+     * Check if Scaape Exists
+     */
+    const { id } = reqObj;
+
+    const scaapeDetails = await this.fetchBasicScaapeDetailsById(id);
+
+    if (!scaapeDetails) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Scaape not found",
+      });
+    }
+
+    // Update not allowed if current date time is greater than the event start date time
+    if (moment().isAfter(scaapeDetails.event_start_datetime)) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Event has already started! So, you can't update the event",
+      });
+    }
+
+    const {
+      user_id,
+      name,
+      description,
+      event_end_datetime,
+      event_start_datetime,
+      scaape_event_id,
+      target_group,
+    } = reqObj;
+
+    const updateObj: IUpdateScaapeBasicDetailsObj = {
+      id,
+      name,
+      description,
+      event_end_datetime,
+      event_start_datetime,
+      scaape_event_id,
+      target_group,
+      updated_at: moment().format(),
+      updated_by: user_id,
+    };
+
+    return this.updateScaapesDb(updateObj);
+    /**
+     * TODO: Do We need to Send Users Notification?
+     */
+  };
+
+  protected updateScaapeLocationDetailsService = async (
+    reqObj: IUpdateScaapeLocationDetailsReqObj
+  ) => {
+    /**
+     * Check if Scaape Exists
+     */
+    const { id } = reqObj;
+
+    const scaapeDetails = await this.fetchBasicScaapeDetailsById(id);
+
+    if (!scaapeDetails) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Scaape not found",
+      });
+    }
+
+    // Update not allowed if current date time is greater than the event start date time
+    if (moment().isAfter(scaapeDetails.event_start_datetime)) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Event has already started! So, you can't update the event",
+      });
+    }
+
+    const { user_id, lat, long, city, address_line, address_landmark } = reqObj;
+
+    const updateObj: IUpdateScaapeLocationDetailsObj = {
+      id,
+      lat,
+      long,
+      city,
+      address_line,
+      address_landmark,
+      updated_at: moment().format(),
+      updated_by: user_id,
+    };
+
+    return this.updateScaapesDb(updateObj);
+    /**
+     * TODO: Do We need to Send Users Notification?
+     * - Notify the users about the location change
+     * - Update the location in the chat
+     * - Update the location in the event details
+     *
+     */
+  };
+
+  protected updateScaapePaymentDetailsService = async (
+    reqObj: IUpdateScaapePaymentDetailsReqObj
+  ) => {
+    /**
+     * Check if Scaape Exists
+     */
+    const { id } = reqObj;
+
+    const scaapeDetails = await this.fetchBasicScaapeDetailsById(id);
+
+    if (!scaapeDetails) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Scaape not found",
+      });
+    }
+
+    // Update not allowed if current date time is greater than the event start date time
+    if (moment().isAfter(scaapeDetails.event_start_datetime)) {
+      throw new ErrorHandler({
+        status_code: 400,
+        message: "Event has already started! So, you can't update the event",
+      });
+    }
+
+    const {
+      user_id,
+      amount,
+      cost_breakup,
+      hours_before_cancellation,
+      number_of_seats,
+    } = reqObj;
+
+    const updateObj: IUpdateScaapePaymentDetailsObj = {
+      id,
+      amount,
+      cost_breakup,
+      hours_before_cancellation,
+      number_of_seats,
+      updated_at: moment().format(),
+      updated_by: user_id,
+    };
+
+    return this.updateScaapesDb(updateObj);
   };
 }

@@ -7,6 +7,9 @@ import {
   validateFetchScaapePendingApprovalsByScaapeId,
   validateFetchScaapesForDashboard,
   validateManageApprovals,
+  validateUpdateScaapeBasicDetails,
+  validateUpdateScaapeLocation,
+  validateUpdateScaapePaymentSettings,
 } from "./middleware";
 
 const router: Router = Router();
@@ -20,6 +23,9 @@ const {
   manageApprovalsController,
   fetchScaapeParticipantsByScaapeIdController,
   fetchLocationDetailsController,
+  updateScaapeBasicDetailsController,
+  updateScaapeLocationController,
+  updateScaapePaymentSettingsController,
 } = new DashboardController();
 
 /**
@@ -67,6 +73,24 @@ router.get(
   "/scaapes/participants/:scaape_id",
   validateFetchScaapeParticipantsByScaapeId,
   fetchScaapeParticipantsByScaapeIdController
+);
+
+router.patch(
+  "/scaapes/basic/:scaape_id",
+  validateUpdateScaapeBasicDetails,
+  updateScaapeBasicDetailsController
+);
+
+router.patch(
+  "/scaapes/location/:scaape_id",
+  validateUpdateScaapeLocation,
+  updateScaapeLocationController
+);
+
+router.patch(
+  "/scaapes/payment/:scaape_id",
+  validateUpdateScaapePaymentSettings,
+  updateScaapePaymentSettingsController
 );
 
 export default router;

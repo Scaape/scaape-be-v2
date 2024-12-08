@@ -297,3 +297,82 @@ export type IFetchLocationAPIRes = {
   suburb: string;
   formatted: string;
 };
+
+export type IUpdateScaapeBasicDetailsReqObj = {
+  id: string;
+  user_id: string;
+
+  name: string;
+  description: string;
+  event_start_datetime: string;
+  event_end_datetime: string;
+  scaape_event_id: string;
+  target_group: string;
+};
+
+export type IFetchBasicScaapeDetailsByIdDBRes = {
+  id: string;
+  name: string;
+  description: string;
+  event_start_datetime: string;
+  event_end_datetime: string;
+  scaape_event_id: string;
+  target_group: string;
+};
+
+export type IUpdateScaapeBasicDetailsObj = {
+  id: string;
+  name: string;
+  description: string;
+  event_start_datetime: string;
+  event_end_datetime: string;
+  scaape_event_id: string;
+  target_group: string;
+
+  updated_at: string;
+  updated_by: string;
+};
+
+export type IUpdateScaapeLocationDetailsObj = {
+  id: string;
+  lat: number;
+  long: number;
+  city: string;
+  address_line: string;
+  address_landmark: string | null;
+
+  updated_at: string;
+  updated_by: string;
+};
+
+export type IUpdateScaapeLocationDetailsReqObj = {
+  id: string;
+  user_id: string;
+
+  lat: number;
+  long: number;
+  city: string;
+  address_line: string;
+  address_landmark: string | null;
+};
+
+export type IUpdateScaapePaymentDetailsObj = {
+  id: string;
+  amount: number | null;
+  cost_breakup: string | null;
+  hours_before_cancellation: number;
+  number_of_seats: number | null;
+
+  updated_at: string;
+  updated_by: string;
+};
+
+export type IUpdateScaapePaymentDetailsReqObj = {
+  id: string;
+  user_id: string;
+
+  amount: number | null;
+  cost_breakup: string | null;
+  hours_before_cancellation: number;
+  number_of_seats: number | null;
+};

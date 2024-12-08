@@ -3,6 +3,7 @@ import { ScaapeParticipantsStatus } from "./types/enums";
 import {
   IAllFetchScaapesDbReqObj,
   ICreateScaapeObj,
+  IFetchBasicScaapeDetailsByIdDBRes,
   IFetchDashboardScaapesDbRes,
   IFetchScaapeDetailsByIdDbReqObj,
   IFetchScaapeDetailsByIdDbRes,
@@ -15,7 +16,10 @@ import {
   IFetchScaapesDbRes,
   IFetchUserDetailsWithInterestsDbRes,
   IUpdateScaapeAttendeeCountDbReqObj,
+  IUpdateScaapeBasicDetailsObj,
+  IUpdateScaapeLocationDetailsObj,
   IUpdateScaapeParticipantsStatusDbReqObj,
+  IUpdateScaapePaymentDetailsObj,
   IUserDetails,
 } from "./types/interface";
 
@@ -969,7 +973,11 @@ export default class DashboardDb {
   };
 
   protected updateScaapesDb = async (
-    scaapeObj: IUpdateScaapeAttendeeCountDbReqObj
+    scaapeObj:
+      | IUpdateScaapeAttendeeCountDbReqObj
+      | IUpdateScaapeBasicDetailsObj
+      | IUpdateScaapeLocationDetailsObj
+      | IUpdateScaapePaymentDetailsObj
   ) => {
     const { id, ...rest } = scaapeObj;
     const query = db.format(`UPDATE scaapes SET ? WHERE id = $1`, rest);
@@ -1034,5 +1042,18 @@ export default class DashboardDb {
     ]);
 
     return rows[0]?.total_count || 0;
+  };
+
+  protected fetchBasicScaapeDetailsById = async (
+    id: string
+  ): Promise<IFetchBasicScaapeDetailsByIdDBRes> => {
+    const query = `
+      SELECT
+        id, name, event_start_datetime, event_end_datetime,
+        scaape_event_id, target_group
+      FROM scaapes WHERE id = $1 AND deleted_at IS NULL;
+    `;
+    const { rows } = await db.query(query, [id]);
+    return rows[0] as unknown as IFetchBasicScaapeDetailsByIdDBRes;
   };
 }

@@ -183,17 +183,6 @@ export default class DashboardController extends DashboardService {
     }
   };
 
-  /**
-   * things to check for joining a scaape
-   * / paid
-   *    - check if the user has paid
-   *    - transaction_id
-   *    - check if the event is women OR men ONLY event
-   *    - check if the user is of the same
-   *    -
-   * / un-paid
-   */
-
   public manageApprovalsController = async (req: Request, res: Response) => {
     try {
       const { status, user_id } = req.body,
@@ -253,6 +242,101 @@ export default class DashboardController extends DashboardService {
       res.status(200).send({
         success: true,
         data: locationDetails,
+      });
+    } catch (err) {
+      customErrorHandler(res, err);
+    }
+  };
+
+  public updateScaapeBasicDetailsController = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const { scaape_id } = req.params,
+        {
+          user_id,
+          name,
+          description,
+          scaape_event_id,
+          event_end_datetime,
+          event_start_datetime,
+          target_group,
+        } = req.body;
+
+      await this.updateScaapeBasicDetailsService({
+        id: scaape_id,
+        user_id,
+        name,
+        description,
+        scaape_event_id,
+        event_end_datetime,
+        event_start_datetime,
+        target_group,
+      });
+
+      res.status(200).send({
+        success: true,
+        message: "Scaape details updated successfully",
+      });
+    } catch (err) {
+      customErrorHandler(res, err);
+    }
+  };
+
+  public updateScaapeLocationController = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const { scaape_id } = req.params,
+        { user_id, lat, long, city, address_line, address_landmark } = req.body;
+
+      await this.updateScaapeLocationDetailsService({
+        id: scaape_id,
+        user_id,
+        lat,
+        long,
+        city,
+        address_line,
+        address_landmark,
+      });
+
+      res.status(200).send({
+        success: true,
+        message: "Scaape location updated successfully",
+      });
+    } catch (err) {
+      customErrorHandler(res, err);
+    }
+  };
+
+  public updateScaapePaymentSettingsController = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      const { scaape_id } = req.params,
+        {
+          user_id,
+          amount,
+          cost_breakup,
+          hours_before_cancellation,
+          number_of_seats,
+        } = req.body;
+
+      await this.updateScaapePaymentDetailsService({
+        id: scaape_id,
+        user_id,
+        amount,
+        cost_breakup,
+        hours_before_cancellation,
+        number_of_seats,
+      });
+
+      res.status(200).send({
+        success: true,
+        message: "Scaape payment settings updated successfully",
       });
     } catch (err) {
       customErrorHandler(res, err);

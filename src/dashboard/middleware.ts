@@ -153,3 +153,100 @@ export const validateFetchScaapePendingApprovalsByScaapeId = async (
     });
   }
 };
+
+export const validateUpdateScaapeBasicDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const schema = Joi.object({
+      user_id: Joi.string().required().uuid(),
+
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      event_start_datetime: Joi.string().required(),
+      event_end_datetime: Joi.string().required(),
+      scaape_event_id: Joi.string().required(),
+      target_group: Joi.string().required(),
+    });
+
+    const paramsSchema = Joi.object({
+      scaape_id: Joi.string().required().uuid(),
+    });
+
+    req.body = await schema.validateAsync(req.body);
+    req.params = await paramsSchema.validateAsync(req.params);
+    next();
+  } catch (error: any) {
+    res.status(400).send({
+      success: false,
+      message: "Validation failed",
+      errors: error.details.map((detail) => detail.message),
+    });
+  }
+};
+
+export const validateUpdateScaapeLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const schema = Joi.object({
+      user_id: Joi.string().required().uuid(),
+
+      lat: Joi.number().required(),
+      long: Joi.number().required(),
+      city: Joi.string().required(),
+      address_line: Joi.string().required(),
+      landmark: Joi.string().allow(null).optional(),
+    });
+
+    const paramsSchema = Joi.object({
+      scaape_id: Joi.string().required().uuid(),
+    });
+
+    req.body = await schema.validateAsync(req.body);
+    req.params = await paramsSchema.validateAsync(req.params);
+    next();
+  } catch (error: any) {
+    res.status(400).send({
+      success: false,
+      message: "Validation failed",
+      errors: error.details.map((detail) => detail.message),
+    });
+  }
+};
+
+export const validateUpdateScaapePaymentSettings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const schema = Joi.object({
+      user_id: Joi.string().required().uuid(),
+
+      is_free_event: Joi.boolean().required(),
+      entry_fees: Joi.number().optional().allow(null),
+      cost_breakup: Joi.string().optional(),
+      hours_before_cancellation: Joi.number().required(),
+      number_of_seats: Joi.number().optional().allow(null),
+    });
+
+    const paramsSchema = Joi.object({
+      scaape_id: Joi.string().required().uuid(),
+    });
+
+    req.body = await schema.validateAsync(req.body);
+    req.params = await paramsSchema.validateAsync(req.params);
+    next();
+  } catch (error: any) {
+    res.status(400).send({
+      success: false,
+      message: "Validation failed",
+      errors: error.details.map((detail) => detail.message),
+    });
+  }
+};
